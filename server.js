@@ -5,22 +5,19 @@ require('dotenv').config();
 const Journey = require('./models/journey.js');
 const Station = require('./models/station.js');
 const mongoose = require("mongoose");
+const cors = require("cors")
 
-
-//const dataBaseURL = `dev.hsl.fi/citybikes/od-trips-${year}/${year}-${month}.csv`
-let year = "2021";
-let month ="05";
-
-const journeyDataURL = `https://infopalvelut.storage.hsldev.com/citybikes/od-trips-${year}/${year}-${month}.csv`;
 const stationDataURL = `https://opendata.arcgis.com/datasets/726277c507ef4914b0aec3cbcfcbfafc_0.csv`;
-const sampleinputPath ="./sampledata/samplesationdata.csv";
+const sampleinputPath ="./sampledata/samplesationdata.csv"; //filepath for csv file used in testing
 
-const journeysList = [];
-const stationList = [];
+const journeysList = []; //contains journey -objects
+const stationList = []; //contains station -objects
 
-async function retrieveCityBikeDataFrom(dataURL) {
+async function retrieveCityBikeDataFrom(year,month) {
+    const journeyDataURL = `https://infopalvelut.storage.hsldev.com/citybikes/od-trips-${year}/${year}-${month}.csv`;
+
     //fecthes csv data from the given URL, and then parses it to objects
-    
+
     try {
         needle
             .get(dataURL)
@@ -64,3 +61,14 @@ async function retrieveStationDataFrom(url) {
     }
 }
 
+const PORT = process.env.PORT || "8080"; //port for the web server
+const app = express(); //using express library to make the server
+app.use(cors()); //allow cross origin resource sharing
+
+app.get("/api",(req,res) => {
+    res.send("<h1>Empty page</h1>");
+  })
+
+
+app.listen(PORT);
+console.log(`Server running on port ${PORT}`);
