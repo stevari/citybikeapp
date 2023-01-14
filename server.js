@@ -8,10 +8,13 @@ const csv = require("csv-parser"); //to parse csv data
 let year = "2021";
 let month ="05";
 
-const dataURL = `https://infopalvelut.storage.hsldev.com/citybikes/od-trips-${year}/${year}-${month}.csv`
+const journeyDataURL = `https://infopalvelut.storage.hsldev.com/citybikes/od-trips-${year}/${year}-${month}.csv`;
+const stationDataURL = `https://opendata.arcgis.com/datasets/726277c507ef4914b0aec3cbcfcbfafc_0.csv`;
+const sampleinputPath ="./sampledata/samplesationdata.csv";
 
-const sampleinputPath ="./sampledata/samplejourneys.csv";
 const journeysList = [];
+const stationList = [];
+
 async function retrieveCityBikeDataFrom(dataURL) {
     //fecthes csv data from the given URL
     
@@ -48,4 +51,42 @@ async function retrieveCityBikeDataFrom(dataURL) {
     }
 }
 
-retrieveCityBikeDataFrom(dataURL);
+async function retrieveStationDataFrom(url) {
+    /*
+    Retrieves and parses station data from url 
+    Data might look like this:
+    {
+        FID: '431',
+        ID: '380',
+        Nimi: 'Pirkkolan liikuntapuisto',
+        Namn: 'Britas idrottspark',
+        Name: 'Pirkkolan liikuntapuisto',
+        Osoite: 'Pirkkolan metsätie 6',
+        Adress: 'Britas skogsväg 6',
+        Kaupunki: 'Espoo',
+        Stad: 'Esbo',
+        Operaattor: 'City Bike Finland',
+        Kapasiteet: '14',
+        x: '24.9097508532821',
+        y: '60.232734803775'
+}
+    */
+    try {
+        needle
+        .get(url)
+        .pipe(csv({
+            mapValues: ({ value }) => value.replace(/\s/g, 'Helsinki') //empty fields are an indicator that the city is Helsinki, so replace empty with Helsinki
+          }))
+        .on('data', (row) =>{
+            stationList.push(row);
+        })
+        .on("done", (err) => {
+            if (err) console.log("An error has occurred");
+            else console.log(`Done. StationList has ${stationList.length} items`); 
+            });
+    } catch (error) {
+        console.log('error in retrieveStationDataFrom(url)'+error);
+    }
+}
+retrieveStationDataFrom(stationDataURL);
+retrieveCityBikeDataFrom(journeyDataURL);
