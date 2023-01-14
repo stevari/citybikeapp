@@ -1,7 +1,10 @@
 const needle = require("needle"); //to get data from api endpoint
 const express = require('express'); //to make an express server
 const csv = require("csv-parser"); //to parse csv data
-//const fs = require("fs"); //using file system to create a readable stream of data
+require('dotenv').config();
+const Journey = require('./models/journey.js');
+const Station = require('./models/station.js');
+const mongoose = require("mongoose");
 
 
 //const dataBaseURL = `dev.hsl.fi/citybikes/od-trips-${year}/${year}-${month}.csv`
@@ -16,20 +19,8 @@ const journeysList = [];
 const stationList = [];
 
 async function retrieveCityBikeDataFrom(dataURL) {
-    //fecthes csv data from the given URL
+    //fecthes csv data from the given URL, and then parses it to objects
     
-    /*
-    data looks like this:
-    {
-        Departure: '2021-05-31T23:05:10',
-        Return: '2021-05-31T23:10:25',
-        Departurestationid: '270',
-        Departurestationname: 'Tulisuontie',
-        Returnstationid: '262',
-        Returnstationname: 'Siilitie (M)',
-        Covereddistancem: '1235',
-        Durationsec: '311'
-      } */
     try {
         needle
             .get(dataURL)
@@ -52,25 +43,9 @@ async function retrieveCityBikeDataFrom(dataURL) {
 }
 
 async function retrieveStationDataFrom(url) {
-    /*
-    Retrieves and parses station data from url 
-    Data might look like this:
-    {
-        FID: '431',
-        ID: '380',
-        Nimi: 'Pirkkolan liikuntapuisto',
-        Namn: 'Britas idrottspark',
-        Name: 'Pirkkolan liikuntapuisto',
-        Osoite: 'Pirkkolan metsätie 6',
-        Adress: 'Britas skogsväg 6',
-        Kaupunki: 'Espoo',
-        Stad: 'Esbo',
-        Operaattor: 'City Bike Finland',
-        Kapasiteet: '14',
-        x: '24.9097508532821',
-        y: '60.232734803775'
-}
-    */
+    
+    //Retrieves and parses station data from url 
+
     try {
         needle
         .get(url)
@@ -88,5 +63,4 @@ async function retrieveStationDataFrom(url) {
         console.log('error in retrieveStationDataFrom(url)'+error);
     }
 }
-retrieveStationDataFrom(stationDataURL);
-retrieveCityBikeDataFrom(journeyDataURL);
+
