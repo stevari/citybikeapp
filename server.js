@@ -6,49 +6,37 @@ const Journey = require('./models/journey.js');
 const Station = require('./models/station.js');
 const mongoose = require("mongoose");
 const cors = require("cors")
+const fs = require("fs");
+const { resolve } = require("path");
+const journey = require("./models/journey.js");
 
 const stationDataURL = `https://opendata.arcgis.com/datasets/726277c507ef4914b0aec3cbcfcbfafc_0.csv`;
-const sampleinputPath ="./sampledata/samplesationdata.csv"; //filepath for csv file used in testing
+const citybikepath= "./sampledata/" 
 
 
 
-
-async function retrieveCityBikeDataFrom(year,month) {
-    console.log("called retrievefunction")
+async function retrieveCityBikeDataFrom(path) {
+    console.log("called retrievefunction with path params: "+path) //debugging
     const journeysList = []; //contains journey -objects. for testing
-    const dataURL = `https://infopalvelut.storage.hsldev.com/citybikes/od-trips-${year}/${year}-${month}.csv`;
-
-    //fecthes csv data from the given URL, and then parses it to objects
-
-    try {
-       return new Promise((resolve, reject) => {
-        needle
-            .get(dataURL)
-            .pipe(csv({
-                mapHeaders: ({ header }) => header.replace(/\s|\(|\)|\./g, '') //get rid off whitespace and other stuff we don't want on headers
-              }))
-            .on('data', async (row) => {
-                if(row.Durationsec >= 10 && row.Covereddistancem > 10){ //only add journeys that meet the criteria we have determined
-                    journeysList.push(row);
-                }
-            })
-            .on("done", async (err) => {
-                if (err){
-                    console.log("An error has occurred");
-                } 
-                else{
-                    await postJourneyToDatabase(journeysList[0]).then(result => resolve(result));
-                     
-                } 
-                
-                });
-        
-       }) 
-        
-    } catch (error) {
-        console.log('error in retrieveCityBikeDataFrom(url)'+error);
-        
-    }
+    return new Promise((resolve,reject) =>{
+        fs.createReadStream(path) //using streams to work with large files more effecticelt
+        .pipe(csv({
+            mapHeaders: ({ header }) => header.replace(/\s|\(|\)|\./g, '') //get rid off whitespace and other stuff we don't want on headers
+        }))
+        .on("data", (data) => {
+            if(data.Durationsec >= 10 && data.Covereddistancem > 10){ //only add journeys that meet the criteria we have determined
+                journeysList.push(data)
+            }
+         })
+        .on("end", () => {
+        //console.log(journeysList);
+        journeysList.forEach(journey => { //loop through the list of journeys and add to db
+            postJourneyToDatabase(journey)
+        })
+        resolve(journeysList) //return the list of journeys
+  });
+    })
+    
 }
 
 async function retrieveStationDataFrom(url) {
@@ -63,13 +51,12 @@ async function retrieveStationDataFrom(url) {
             //mapValues: ({ value }) => value.replace(/\s/g, 'Helsinki') //empty fields are an indicator that the city is Helsinki, so replace empty with Helsinki
           }))
         .on('data', async (row) =>{
-            if(row.Kaupunki ==" "){ //the dataset contains unwanted empty fields so we have to amnually fix them
+            if(row.Kaupunki ==" "){ //the dataset contains unwanted empty fields so we have to manually fix them
                 row.Kaupunki = "Helsinki"
                 row.Stad = "Helsingfors"
                 row.Operaattor ="CityBike Finland"
             }
             stationList.push(row);
-            
             
         })
         .on("done", async (err) => {
@@ -77,11 +64,11 @@ async function retrieveStationDataFrom(url) {
                 console.log("An error has occurred");
             } 
             else{
-                //await postStationToDatabase(stationList[0]).then(result => resolve(result));
+                //loop through the station list and post each one to the db
                 stationList.forEach(station =>{
                     postStationToDatabase(station);
                 })
-                resolve(stationList);
+                resolve(stationList); //return list of stations
 
             } 
             });
@@ -93,6 +80,7 @@ async function retrieveStationDataFrom(url) {
 }
 
 async function postJourneyToDatabase(data){ 
+    
     const journey = new Journey({
         Departure: data.Departure,
         Return: data.Return,
@@ -103,8 +91,8 @@ async function postJourneyToDatabase(data){
         Covereddistancem: data.Covereddistancem,
         Durationsec: data.Durationsec
     })
-    await journey.save().then(result => {
-        console.log(' saved to db');
+    journey.save().then(result => {
+        //console.log(' saved to db');
         return result;
         
     })
@@ -139,19 +127,20 @@ app.get('/api',(req,res) => {
   })
 
 app.get('/api/journeys/:year/:month', async (req,res) => {
-    //get journey data from specified year and month
-    //front-end validates req parameters so that only data that actually exists in HSL open data, can be queried
+    //searches for journeys with the given parameters from the db. If the db doesn't have these journeys, the server will fetch them from a file and add to db
+    //front-end validates req parameters (2021-05/06/07) so that only data that actually exists in HSL open data, can be queried
     const year = req.params.year;
     const month = req.params.month;
 
-    Journey.find({Departure:{$regex:`${year}-${month}*`}}).then( result => {
+    Journey.find({"Departure":{$gte: `${year}-${month}-00 00:00:00`, $lt: `${year}-${month+1}-00 00:00:00`}}).then( result => {
         if(result.length != 0){            
             res.json(result);
         }else{
-           retrieveCityBikeDataFrom(year,month).then(
-            () => {
-                Journey.find({Departure:{$regex:`${year}-${month}*`}}).then( result => {res.json(result)})
-                });
+            retrieveCityBikeDataFrom(`${citybikepath}${year}-${month}-small.csv`).then(
+                () => {
+                    Journey.find({"Departure":{$gte: `${year}-${month}-00 00:00:00`, $lt: `${year}-${month+1}-00 00:00:00`}}).then(result => {res.json(result)})
+                }
+            );
             }
     });
 
@@ -174,7 +163,7 @@ app.get('/api/stations/', async (req,res) => {
     }
    
 })
-retrieveStationDataFrom(stationDataURL);
+
 
 app.listen(PORT);
 console.log(`Server running on port ${PORT}`);
