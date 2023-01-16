@@ -27,7 +27,7 @@ async function retrieveCityBikeDataFrom(year,month) {
             .pipe(csv({
                 mapHeaders: ({ header }) => header.replace(/\s|\(|\)|\./g, '') //get rid off whitespace and other stuff we don't want on headers
               }))
-            .on('data', (row) => {
+            .on('data', async (row) => {
                 if(row.Durationsec >= 10 && row.Covereddistancem > 10){ //only add journeys that meet the criteria we have determined
                     journeysList.push(row);
                 }
@@ -60,17 +60,28 @@ async function retrieveStationDataFrom(url) {
         needle
         .get(url)
         .pipe(csv({
-            mapValues: ({ value }) => value.replace(/\s/g, 'Helsinki') //empty fields are an indicator that the city is Helsinki, so replace empty with Helsinki
+            //mapValues: ({ value }) => value.replace(/\s/g, 'Helsinki') //empty fields are an indicator that the city is Helsinki, so replace empty with Helsinki
           }))
-        .on('data', (row) =>{
+        .on('data', async (row) =>{
+            if(row.Kaupunki ==" "){ //the dataset contains unwanted empty fields so we have to amnually fix them
+                row.Kaupunki = "Helsinki"
+                row.Stad = "Helsingfors"
+                row.Operaattor ="CityBike Finland"
+            }
             stationList.push(row);
+            
+            
         })
         .on("done", async (err) => {
             if (err){
                 console.log("An error has occurred");
             } 
             else{
-                await postStationToDatabase(stationList[0]).then(result => resolve(result));
+                //await postStationToDatabase(stationList[0]).then(result => resolve(result));
+                stationList.forEach(station =>{
+                    postStationToDatabase(station);
+                })
+                resolve(stationList);
 
             } 
             });
@@ -93,7 +104,7 @@ async function postJourneyToDatabase(data){
         Durationsec: data.Durationsec
     })
     await journey.save().then(result => {
-        console.log(result+' saved to db');
+        console.log(' saved to db');
         return result;
         
     })
@@ -103,15 +114,15 @@ async function postJourneyToDatabase(data){
         FID: data.FID,
         ID: data.ID,
         Name: data.Name,
-        Address: data.Address,
-        City: data.City,
-        Operator: data.Operator,
-        Capacity: data.Capacity,
+        Address: data.Osoite,
+        City: data.Kaupunki,
+        Operator: data.Operaattor,
+        Capacity: data.Kapasiteet,
         x: data.x,
         y: data.y
     })
     await station.save().then(result => {
-        console.log(result +' saved to db');
+        //console.log(result +' saved to db');
         return result;
         
     })
@@ -163,6 +174,7 @@ app.get('/api/stations/', async (req,res) => {
     }
    
 })
+retrieveStationDataFrom(stationDataURL);
 
 app.listen(PORT);
 console.log(`Server running on port ${PORT}`);
