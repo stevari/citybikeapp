@@ -1,7 +1,8 @@
 import React from 'react'
 import "./App.css"
+import 'bootstrap/dist/css/bootstrap.min.css';
 import Home from "./components/Home";
-import Navbar from "./components/Navbar";
+import Navbar from "./components/MainNavbar";
 import JourneyListView from "./components/JourneyListView";
 import StationListView from "./components/StationListView";
 import SingleStationView from "./components/SingleStationView";
