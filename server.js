@@ -133,8 +133,8 @@ app.get('/api/journeys/:year/:month', async (req,res) => {
     const month = req.params.month;
 
     Journey.find({"Departure":{$gte: `${year}-${month}-00 00:00:00`, $lt: `${year}-${month+1}-00 00:00:00`}}).then( result => {
-        if(result.length != 0){            
-            res.json(result);
+        if(result.length != 0){          
+            res.json({"journeyData":result});
         }else{
             retrieveCityBikeDataFrom(`${citybikepath}${year}-${month}-small.csv`).then(
                 () => {
@@ -150,7 +150,7 @@ app.get('/api/stations/', async (req,res) => {
     const count = await Station.countDocuments({limit:1}); //counts document (stopping at one). 
     if(count > 0){ //if there are documents created, data is already in the db so we can retrieve it
         Station.find({}).then(result => {
-            res.json(result)
+            res.json({"stationdata":result})
         })
     }else{ //otherwise, call retrievestationdata to update our db
         console.log('no station data yet');

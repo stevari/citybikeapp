@@ -14,12 +14,17 @@ export default function Home() {
          </div>
          <Button variant='dark' className='btnJourney' href='journeylist'>Journey list</Button>
          <Button variant='dark' className='btnStation' href='stationlist'>Station list</Button>
+         <Button variant='dark' className='btnSingleStation' href='stationlist'>Station info</Button>
          
          
          
       </>
       
-      
+      //hero section 2: introduce journey list view
+
+      //hero section 3: introduce station list view
+
+      //hero section 4: introduce station info view
     
     
   )
