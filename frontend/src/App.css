@@ -1,4 +1,7 @@
 .App {
     font-family: 'Roboto Flex';
   }
-  
+.content{
+  background-color: rgb(19, 19, 18); 
+  height: 100vh;
+}
