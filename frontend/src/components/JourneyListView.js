@@ -1,13 +1,39 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import Table from 'react-bootstrap/Table'
 
 
 export default function JourneyListView(data) {
   //this component accepts journey data as props to display journeys in a table
   //displays departure and return stations, covered distance in kilometers and duration in minutes
-  const journeylist = data.props.journeyData
+  const [journeyData,setJourneyData] =useState([{}]);
+  const journeylist = journeyData.journeyData
 
-  //console.log('journeylist '+journeylist);
+  async function fetchData(params){
+    //fetch all stations from the backend since we are going to display all of the stations
+    fetch(`api/journeys/${params}`).then(
+      response => {
+        if(!response.ok){
+          alert(`Network error when fetching data, please try again later. Response status: ${response.status}`)
+        }else{
+          return response.json();
+        }
+      }
+    ).then(
+      data => {
+        console.log(data)
+        if(data!==undefined){
+          setJourneyData(data)
+        }else{
+          setJourneyData([]);
+        } 
+      }
+    ) 
+  } 
+  useEffect(() => {
+    fetchData("2021/05")
+    
+  }, [])
+
   
 
   return (

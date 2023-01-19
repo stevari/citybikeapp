@@ -1,9 +1,35 @@
-import {React,useState} from 'react'
+import {React,useState,useEffect} from 'react'
 import Table from 'react-bootstrap/Table'
 
 export default function StationListView(data) {
     //receives list of stations through props, then displays the stations in a table
-    const stationlist = data.props.stationdata
+    const [stationData,setStationData] =useState([{}]);
+    const stationlist = stationData.stationdata
+    async function fetchData(){
+      //fetch all stations from the backend since we are going to display all of the stations
+      fetch(`api/stations`).then(
+        response => {
+          if(!response.ok){
+            alert(`Network error when fetching data, please try again later. Response status: ${response.status}`)
+          }else{
+            return response.json();
+          }
+        }
+      ).then(
+        data => {
+          console.log(data)
+          if(data!==undefined){
+            setStationData(data)
+          }else{
+            setStationData([]);
+          } 
+        }
+      ) 
+    } 
+    useEffect(() => {
+      fetchData("stations")
+      
+    }, [])
 
     
   return (
@@ -94,8 +120,8 @@ const StationTable = (data) => {
   
 }
 const Pagination = ({ activePage, count, rowsPerPage, totalPages, setActivePage }) => {
-  const beginning = activePage === 1 ? 1 : rowsPerPage * (activePage - 1) + 1
-  const end = activePage === totalPages ? count : beginning + rowsPerPage - 1
+  const beginning = activePage === 1 ? 1 : rowsPerPage * (activePage - 1) + 1;
+  const end = activePage === totalPages ? count : beginning + rowsPerPage - 1;
   const pStyle = {
     "color":"orange",
     "padding":"1",
