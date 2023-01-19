@@ -2,6 +2,7 @@ const needle = require("needle"); //to get data from api endpoint
 const express = require('express'); //to make an express server
 const csv = require("csv-parser"); //to parse csv data
 require('dotenv').config();
+const path = require('path'); //to server frontend
 const Journey = require('./models/journey.js');
 const Station = require('./models/station.js');
 const mongoose = require("mongoose");
@@ -121,7 +122,7 @@ async function postJourneyToDatabase(data){
 const PORT = process.env.PORT || "8080"; //port for the web server
 const app = express(); //using express library to make the server
 app.use(cors()); //allow cross origin resource sharing
-
+app.use(express.static(path.resolve(__dirname, 'frontend/build'))); //serve frontend static files
 app.get('/api',(req,res) => {
     res.send("<h1>Empty page</h1>");
   })
@@ -164,6 +165,10 @@ app.get('/api/stations/', async (req,res) => {
    
 })
 
+app.get('*',(req,res) => {
+    //any requests wihout /api will be served with front end page
+    res.sendFile(path.resolve(__dirname,'frontend/build','index.html'));
+  })
 
 app.listen(PORT);
 console.log(`Server running on port ${PORT}`);
