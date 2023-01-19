@@ -1,7 +1,8 @@
 import {React,useState,useEffect} from 'react'
 import Table from 'react-bootstrap/Table'
+import { Pagination } from './Pagination';
 
-export default function StationListView(data) {
+export default function StationListView() {
     //receives list of stations through props, then displays the stations in a table
     const [stationData,setStationData] =useState([{}]);
     const stationlist = stationData.stationdata
@@ -52,7 +53,6 @@ export default function StationListView(data) {
 const StationTable = (data) => {
   
   const columns = [
-    { label: 'ID' },
     { label: 'Name' },
     { label: 'Address' },
     {  label: 'City' },
@@ -86,9 +86,6 @@ const StationTable = (data) => {
           return (
           <tr key={station.ID}>
             <td>
-              {station.ID}
-            </td>
-            <td>
               {station.Name}
             </td>
             <td>
@@ -118,40 +115,4 @@ const StationTable = (data) => {
     </>
   )
   
-}
-const Pagination = ({ activePage, count, rowsPerPage, totalPages, setActivePage }) => {
-  const beginning = activePage === 1 ? 1 : rowsPerPage * (activePage - 1) + 1;
-  const end = activePage === totalPages ? count : beginning + rowsPerPage - 1;
-  const pStyle = {
-    "color":"orange",
-    "padding":"1",
-    "margin":"1"
-  }
-  return (
-    <>
-      <div className="pagination">
-        <button disabled={activePage === 1} onClick={() => setActivePage(1)}>
-           First
-        </button>
-        <button disabled={activePage === 1} onClick={() => setActivePage(activePage - 1)}>
-           Previous
-        </button>
-        <button disabled={activePage === totalPages} onClick={() => setActivePage(activePage + 1)}>
-          Next 
-        </button>
-        <button disabled={activePage === totalPages} onClick={() => setActivePage(totalPages)}>
-          Last 
-        </button>
-      </div>
-      <div>
-      <p style={pStyle}>
-        Page {activePage} of {totalPages}
-      </p>
-      <p style={pStyle}>
-        Stations: {beginning === end ? end : `${beginning} - ${end}`} of {count}
-      </p>
-      </div>
-     
-    </>
-  )
 }
