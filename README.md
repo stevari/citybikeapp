@@ -1,7 +1,10 @@
 # citybikeapp
 
 This as a pre-assignment for Solita Dev Academy Finland 2023.  
-The goal is to create a UI and a backend service for displaying data from journeys made with city bikes in the Helsinki Capital area.  
+The goal is to create a UI and a backend service for displaying data from journeys made with city bikes in the Helsinki Capital area.    
+STATUS: In development as of 19.01.2023  
+Link to the application: https://helcitybikeapp.fly.dev/  
+  
 I will be using open data from Helsinki public transport (HSL).  
 Structure:  
 -Backend will be developed using the Express library  
