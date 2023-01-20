@@ -1,7 +1,7 @@
 import React, { useState,useEffect } from 'react';
 import { Pagination } from './Pagination';
 import Table from 'react-bootstrap/Table'
-
+import {ArrowDownUp} from "react-bootstrap-icons/"
 
 export default function JourneyListView(data) {
   //this component accepts journey data as props to display journeys in a table
@@ -76,7 +76,7 @@ const JourneyTable = (data) => {
       <thead>
         <tr>
           {columns.map(colume =>{
-            return <th key={colume.label}>{colume.label}</th>
+            return <th key={colume.label}>{colume.label} <ArrowDownUp/></th>
             
           })}
          
