@@ -66,6 +66,8 @@ async function retrieveStationDataFrom(url) {
             } 
             else{
                 //loop through the station list and post each one to the db
+                //but first get additional information from all the stations, for example average journey length from station
+                //getAdditionalStationInfoFrom(stationList)
                 stationList.forEach(station =>{
                     postStationToDatabase(station);
                 })
@@ -79,7 +81,9 @@ async function retrieveStationDataFrom(url) {
         console.log('error in retrieveStationDataFrom(url)'+error);
     }
 }
-
+function getAdditionalStationInfoFrom(stations){
+    //TODO
+}
 async function postJourneyToDatabase(data){ 
     
     const journey = new Journey({
@@ -163,6 +167,11 @@ app.get('/api/stations/', async (req,res) => {
 
     }
    
+})
+app.get('/api/stations/:id', async (req,res) =>{ //retrieve station by its ID (int)
+    const ID = req.params.id
+    //console.log("id+"+ID)
+    Station.findOne({"ID":ID}).then(result => {res.json(result)})
 })
 
 app.get('*',(req,res) => {
