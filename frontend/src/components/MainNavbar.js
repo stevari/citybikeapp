@@ -22,7 +22,7 @@ export default function MainNavbar() {
           
         <Nav className="Nav" >
             <Nav.Link href="/" className='navlink'>Home</Nav.Link>
-            <Nav.Link href="singlestation" className='navlink'>Inspect station</Nav.Link>
+            <Nav.Link href="singlestation" className='navlink'>Station map</Nav.Link>
             <Nav.Link href="journeylist" className='navlink'>Journey list</Nav.Link>
             <Nav.Link href="stationlist" className='navlink'>Station list</Nav.Link>
             
