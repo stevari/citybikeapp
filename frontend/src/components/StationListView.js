@@ -20,7 +20,7 @@ export default function StationListView() {
       }
     ).then(
       data => {
-        console.log(data)
+        //console.log(data)
         if (data !== undefined) {
           setStationData(data)
         } else {
@@ -57,7 +57,7 @@ const StationTable = (data) => {
     { label: 'Name' },
     { label: 'Address' },
     { label: 'City' },
-    { label: 'Operator' },
+    //{ label: 'Operator' },
     { label: 'Capacity' },
   ];
   const stationlist = data.stationlist
@@ -96,7 +96,7 @@ const StationTable = (data) => {
         <tbody>
           {calculatedList.map(station => {
             return (
-              <tr key={station.ID}>
+              <tr key={station._id}>
                 <td>
                   <button onClick={() => handleClick(station.ID)}>
                     {station.Name}
@@ -107,9 +107,6 @@ const StationTable = (data) => {
                 </td>
                 <td>
                   {station.City}
-                </td>
-                <td>
-                  {station.Operator}
                 </td>
                 <td>
                   {station.Capacity}
@@ -126,16 +123,27 @@ const StationTable = (data) => {
         totalPages={totalPages}
         setActivePage={setActivePage}
       />
-      {StationPopup(show, handleClose,popupStationID)} 
+      {show ? StationPopup(show, handleClose,popupStationID,stationlist):<></>} 
 
     </>
   )
 }
 
 
-function StationPopup(show, handleClose,id) { //single station view as a pop up
+function StationPopup(show, handleClose,id,stationlist) { //single station view as a pop up
   //retrieves station info with given id
-  const stationID = id;
+  
+  const getStationInfo = () =>{
+    if(stationlist !== undefined && id !== undefined){
+      return (stationlist.find(station => station.ID === id));
+      
+    }
+    return Object;
+  }
+
+  const station = getStationInfo();
+  
+  
   return <Modal
     show={show}
     onHide={handleClose}
@@ -145,18 +153,35 @@ function StationPopup(show, handleClose,id) { //single station view as a pop up
     
   >
     <Modal.Header closeButton>
-      <Modal.Title>Station popup</Modal.Title>
+      <Modal.Title>{station.Name}</Modal.Title>
     </Modal.Header>
-    <Modal.Body>
-      I will not close if you click outside me. Don't even try to press
-      escape key.  
-      My station id is {stationID}
-    </Modal.Body>
-    <Modal.Footer>
-      <Button variant="secondary" onClick={handleClose}>
-        Close
-      </Button>
-      <Button variant="primary">Understood</Button>
-    </Modal.Footer>
+      <Modal.Body>
+      <p>
+        Station Name: {station.Name}
+      </p>
+      <br/>
+      <p>
+        Station Address: {station.Address}
+      </p>
+      <br/>
+      <p>
+        Citybike Operator: {station.Operator} 
+      </p>
+      <br/>
+      <p>
+        Total No. journeys starting from this station: 
+      </p>
+      <br/>
+      <p>
+        Total No. journeys starting from this station:
+      </p>
+      <br/>
+      </Modal.Body>
+      <Modal.Footer>
+        <Button variant="primary" onClick={handleClose}>
+          Close
+        </Button>
+        
+      </Modal.Footer>
   </Modal>;
 }
