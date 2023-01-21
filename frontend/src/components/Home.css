@@ -28,7 +28,7 @@
   .btnJourney{
     color: orange;
     top: 70%;
-    left:50%;
+    left:60%;
     transform: translate(-50%, -50%);
     position: absolute;
   }
