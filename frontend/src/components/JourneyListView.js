@@ -2,6 +2,7 @@ import React, { useState,useEffect } from 'react';
 import { Pagination } from './Pagination';
 import Table from 'react-bootstrap/Table'
 import {ArrowDownUp} from "react-bootstrap-icons/"
+import SpinnerLoading from './SpinnerLoading';
 
 export default function JourneyListView(data) {
   //this component accepts journey data as props to display journeys in a table
@@ -42,7 +43,7 @@ export default function JourneyListView(data) {
 
        <div style={{backgroundColor:"rgb(19, 19, 18)"}}>
     {(typeof journeylist ==='undefined'||journeylist.length<1) ? (
-      <>empty list</> //if there is nothing to show, show a spinner
+      <><SpinnerLoading/></> //if there is nothing to show, show a spinner
     ):( //display journey
      <>
      <JourneyTable journeylist={journeylist}  />

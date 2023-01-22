@@ -5,7 +5,7 @@ import Home from "./components/Home";
 import Navbar from "./components/MainNavbar";
 import JourneyListView from "./components/JourneyListView";
 import StationListView from "./components/StationListView";
-import SingleStationView from "./components/SingleStationView";
+import StationMapView from "./components/StationMapView";
 import {BrowserRouter as Router, Route, Routes} from "react-router-dom";
 
 
@@ -21,7 +21,7 @@ export default function App() {
               <Route path='/' element ={<Home/>}/>
               <Route path='/journeylist' element = {<JourneyListView />}/>
               <Route path='/stationlist' element = {<StationListView />}/>
-              <Route path='/singlestation' element = {<SingleStationView/>}/>
+              <Route path='/stationmap' element = {<StationMapView/>}/>
             </Routes>
           </div>
         </div>

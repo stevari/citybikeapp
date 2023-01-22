@@ -4,6 +4,7 @@ import { Pagination } from './Pagination';
 import { ArrowDownUp } from "react-bootstrap-icons/"
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
+import SpinnerLoading from './SpinnerLoading';
 export default function StationListView() {
   //receives list of stations through props, then displays the stations in a table
   const [stationData, setStationData] = useState([{}]);
@@ -40,7 +41,7 @@ export default function StationListView() {
 
       <div style={{ backgroundColor: "rgb(19, 19, 18)" }}>
         {(typeof stationlist === 'undefined' || stationlist.length < 1) ? (
-          <>empty list</> //if there is nothing to show, show a spinner
+          <><SpinnerLoading/></> //if there is nothing to show, show a spinner
         ) : (
           <>
             <StationTable stationlist={stationlist} />
