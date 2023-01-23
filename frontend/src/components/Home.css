@@ -28,7 +28,7 @@
   .btnJourney{
     color: orange;
     top: 70%;
-    left:60%;
+    left:50%;
     transform: translate(-50%, -50%);
     position: absolute;
   }
@@ -39,7 +39,7 @@
     transform: translate(-50%, -50%);
     position: absolute;
   }
-  .btnSingleStation{
+  .btnStationMap{
     color: orange;
     top: 70%;
     left:60%;

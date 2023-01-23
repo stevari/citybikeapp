@@ -5,7 +5,8 @@
   background-color: rgb(19, 19, 18); 
   height: 100vh;
 }
+
 .leaflet-container {
-  width: 100vw;
+  width: inherit;
   height: 100vh;
 }

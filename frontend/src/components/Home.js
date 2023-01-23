@@ -14,6 +14,7 @@ export default function Home() {
          </div>
          <Button variant='dark' className='btnJourney' href='journeylist'>Journey list</Button>
          <Button variant='dark' className='btnStation' href='stationlist'>Station list</Button>
+         <Button variant='dark' className='btnStationMap' href='stationmap'>Map view</Button>
          
          
          

@@ -5,6 +5,7 @@ import { ArrowDownUp } from "react-bootstrap-icons/"
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import SpinnerLoading from './SpinnerLoading';
+import StationOnMap from './StationOnMap';
 export default function StationListView() {
   //receives list of stations through props, then displays the stations in a table
   const [stationData, setStationData] = useState([{}]);
@@ -157,6 +158,7 @@ function StationPopup(show, handleClose,id,stationlist) { //single station view 
       <Modal.Title>{station.Name}</Modal.Title>
     </Modal.Header>
       <Modal.Body>
+      <div >
       <p>
         Station Name: {station.Name}
       </p>
@@ -177,6 +179,11 @@ function StationPopup(show, handleClose,id,stationlist) { //single station view 
         Total No. journeys starting from this station:
       </p>
       <br/>
+      <div >
+      <StationOnMap station ={station}/> 
+      </div>
+      </div>  
+      
       </Modal.Body>
       <Modal.Footer>
         <Button variant="primary" onClick={handleClose}>
