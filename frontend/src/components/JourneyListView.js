@@ -57,19 +57,32 @@ export default function JourneyListView(data) {
 
 const JourneyTable = (data) => {
   //For each journey show departure and return stations, covered distance in kilometers and duration in minutes
+  const [journeylist,setJourneylist] = useState(data.journeylist);
+  const [sort,setSort] = useState([]);
   const columns = [
-    { label: 'Departure' },
-    { label: 'Return' },
-    { label: 'Distance (km)' },
-    {  label: 'Duration (min)' }
+    { label: 'Departure',sortName:'Departurestationname' },
+    { label: 'Return',sortName:'Returnstationname' },
+    { label: 'Distance (km)',sortName:'Covereddistancem' }, //sortName = object actual values used in sorting 
+    {  label: 'Duration (min)',sortName:'Durationsec' }
   ];
-  const journeylist = data.journeylist
+
   const [activePage, setActivePage] = useState(1)
   const rowsPerPage = 20 //amount of rows to display before slicing or filtering
   const count = journeylist.length //total amount of items (rows)
   const totalPages = Math.ceil(count / rowsPerPage) //total no. of pages in our pagination
   const calculatedList = journeylist.slice((activePage - 1) * rowsPerPage, activePage * rowsPerPage) //number of pages to show
-  
+  const handleSortBtnClick =(label) =>{
+    //sorts list when clicked
+    //console.log("handleSort called");
+    const newList = [...journeylist];
+    if(sort.includes(label)){ //if the sort has been clicked already, we want to reverse the sort
+      setJourneylist(newList.reverse());
+    }else{
+      setJourneylist(newList.sort((a,b) => (a[label] > b[label]) ? 1:-1)); //else, just sort the list using the label as object key, e.g Name
+      setSort(sort.concat(label)) 
+    }
+    
+  }
   
   return (
     <>
@@ -77,7 +90,11 @@ const JourneyTable = (data) => {
       <thead>
         <tr>
           {columns.map(colume =>{
-            return <th key={colume.label}>{colume.label} <ArrowDownUp/></th>
+            return <th key={colume.label}>{colume.label}
+            <button onClick={()=>handleSortBtnClick(colume.sortName)}>
+             <ArrowDownUp/>
+             </button>
+             </th>
             
           })}
          

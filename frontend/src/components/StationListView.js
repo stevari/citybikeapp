@@ -55,6 +55,8 @@ export default function StationListView() {
 }
 
 const StationTable = (data) => {
+  const [stationlist,setStationlist] = useState(data.stationlist);
+  const [sort,setSort] = useState([]);
   const columns = [
     { label: 'Name' },
     { label: 'Address' },
@@ -62,9 +64,21 @@ const StationTable = (data) => {
     //{ label: 'Operator' },
     { label: 'Capacity' },
   ];
-  const stationlist = data.stationlist
 
-
+  const handleSortBtnClick =(label) =>{
+    //sorts list when clicked
+    //console.log("handleSort called");
+    const newList = [...stationlist];
+    if(sort.includes(label)){ //if the sort has been clicked already, we want to reverse the sort
+      setStationlist(newList.reverse());
+    }else{
+      setStationlist(newList.sort((a,b) => (a[label] > b[label]) ? 1:-1)); //else, just sort the list using the label as object key, e.g Name
+      setSort(sort.concat(label)) 
+    }
+    
+    
+    
+  }
   const [activePage, setActivePage] = useState(1)
   const rowsPerPage = 20 //amount of rows to display before slicing or filtering
   const count = stationlist.length //total amount of items (rows)
@@ -89,7 +103,11 @@ const StationTable = (data) => {
         <thead>
           <tr>
             {columns.map(colume => {
-              return <th key={colume.label}>{colume.label} <ArrowDownUp /></th>
+              return <th key={colume.label}>{colume.label}
+               <button onClick={()=>handleSortBtnClick(colume.label)}>
+                <ArrowDownUp/>
+                </button>
+                </th>
 
             })}
 
