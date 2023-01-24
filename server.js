@@ -12,35 +12,11 @@ const { resolve } = require("path");
 const journey = require("./models/journey.js");
 
 const stationDataURL = `https://opendata.arcgis.com/datasets/726277c507ef4914b0aec3cbcfcbfafc_0.csv`;
-const citybikepath= "./sampledata/" 
-
-
-
-async function retrieveCityBikeDataFrom(path) {
-    console.log("called retrievefunction with path params: "+path) //debugging
-    const journeysList = []; //contains journey -objects. for testing
-    return new Promise((resolve,reject) =>{
-        fs.createReadStream(path) //using streams to work with large files more effecticelt
-        .pipe(csv({
-            mapHeaders: ({ header }) => header.replace(/\s|\(|\)|\./g, '') //get rid off whitespace and other stuff we don't want on headers
-        }))
-        .on("data", (data) => {
-            if(data.Durationsec >= 10 && data.Covereddistancem > 10){ //only add journeys that meet the criteria we have determined
-                journeysList.push(data)
-            }
-         })
-        .on("end", () => {
-        //console.log(journeysList);
-        journeysList.forEach(journey => { //loop through the list of journeys and add to db
-            postJourneyToDatabase(journey)
-        })
-        resolve(journeysList) //return the list of journeys
-  });
-    })
-    
-}
+ 
 
 async function retrieveStationDataFrom(url) {
+    //this function only gets called once ofcourse since the station data will not be deleted from the db. 
+    //However, if the data we're to get corrupted, this function will be called again
     const stationList = []; //contains station -objects. for testing
     //Retrieves and parses station data from url 
 
@@ -49,7 +25,6 @@ async function retrieveStationDataFrom(url) {
         needle
         .get(url)
         .pipe(csv({
-            //mapValues: ({ value }) => value.replace(/\s/g, 'Helsinki') //empty fields are an indicator that the city is Helsinki, so replace empty with Helsinki
           }))
         .on('data', async (row) =>{
             if(row.Kaupunki ==" "){ //the dataset contains unwanted empty fields so we have to manually fix them
@@ -81,27 +56,13 @@ async function retrieveStationDataFrom(url) {
         console.log('error in retrieveStationDataFrom(url)'+error);
     }
 }
-function getAdditionalStationInfoFrom(stations){
-    //TODO
+
+async function countDepartingJourneysFromStations(){
+    //for each journey, check if journey's departurestation ID is equal to station ID.
+    //if true, increment count by one. Lastly, update station with a new field called Departures with the count
+   
 }
-async function postJourneyToDatabase(data){ 
-    
-    const journey = new Journey({
-        Departure: data.Departure,
-        Return: data.Return,
-        Departurestationid: data.Departurestationid,
-        Departurestationname: data.Departurestationname,
-        Returnstationid: data.Returnstationid,
-        Returnstationname: data.Returnstationname,
-        Covereddistancem: data.Covereddistancem,
-        Durationsec: data.Durationsec
-    })
-    journey.save().then(result => {
-        //console.log(' saved to db');
-        return result;
-        
-    })
-}
+
  async function postStationToDatabase(data){
     const station = new Station({
         FID: data.FID,
@@ -120,9 +81,9 @@ async function postJourneyToDatabase(data){
         
     })
 }
+
+
     
-
-
 const PORT = process.env.PORT || "8080"; //port for the web server
 const app = express(); //using express library to make the server
 app.use(cors()); //allow cross origin resource sharing
@@ -140,12 +101,8 @@ app.get('/api/journeys/:year/:month', async (req,res) => {
     Journey.find({"Departure":{$gte: `${year}-${month}-00 00:00:00`, $lt: `${year}-${month+1}-00 00:00:00`}}).then( result => {
         if(result.length != 0){          
             res.json({"journeyData":result});
-        }else{
-            retrieveCityBikeDataFrom(`${citybikepath}${year}-${month}-small.csv`).then(
-                () => {
-                    Journey.find({"Departure":{$gte: `${year}-${month}-00 00:00:00`, $lt: `${year}-${month+1}-00 00:00:00`}}).then(result => {res.json(result)})
-                }
-            );
+        }else{ 
+            res.sendStatus(404); //if the data cant be found in the db, respond with 404 not found
             }
     });
 
