@@ -34,13 +34,15 @@ export default function StationMapView() {
   }, [])
   return (
     <div className='leaflet-container'>
-    <MapContainer center={[60.1699, 24.9384]} zoom={13} scrollWheelZoom={true} >
+    <MapContainer center={[60.1699, 24.9384]} zoom={13} scrollWheelZoom={false} >
     <TileLayer
       attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
       url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
     />
     
-      {stationlist ? <Marker key={stationlist[0].ID} position = {[stationlist[0].y, stationlist[0].x]}/> : <></>}
+      {stationlist ? stationlist.map(station => (
+        <Marker key={station.ID} position = {[station.y, station.x]}/> 
+      )) : <></>}
   </MapContainer>
     </div>
     
