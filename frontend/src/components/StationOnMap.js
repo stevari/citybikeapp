@@ -3,6 +3,7 @@ import { MapContainer, TileLayer,Marker,Popup } from 'react-leaflet';
 import "../App.css"
 export default function StationOnMap(props) {
     //displays a map with the station location as a marker
+    //this component is only used within the StationListView component. Idea is to present a single station view
     const station = props.station
     //console.log(station)
   return (

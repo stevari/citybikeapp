@@ -11,7 +11,7 @@ export default function JourneyListView(data) {
   const journeylist = journeyData.journeyData
 
   async function fetchData(params){
-    //fetch all stations from the backend since we are going to display all of the stations
+    //params = e.g 2021/05
     fetch(`api/journeys/${params}`).then(
       response => {
         if(!response.ok){
@@ -111,7 +111,7 @@ const JourneyTable = (data) => {
               {journey.Returnstationname}
             </td>
             <td>
-              {(journey.Covereddistancem/1000).toFixed(1)}
+              {(journey.Covereddistancem/1000).toFixed(2)}
             </td>
             <td>
               {(journey.Durationsec/60).toFixed(0)}

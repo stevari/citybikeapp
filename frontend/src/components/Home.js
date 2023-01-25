@@ -3,7 +3,8 @@ import Button from 'react-bootstrap/Button';
 import "./Home.css"
 
 export default function Home() {
-  return ( //NOTE logo before h1
+  //Landing page component
+  return ( 
       <>
         <div className='hero-image'>
         
