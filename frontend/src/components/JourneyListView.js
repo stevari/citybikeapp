@@ -4,9 +4,17 @@ import Table from 'react-bootstrap/Table'
 import {ArrowDownUp} from "react-bootstrap-icons/"
 import SpinnerLoading from './SpinnerLoading';
 
-export default function JourneyListView(data) {
+
+import Container from 'react-bootstrap/Container';
+import Form from 'react-bootstrap/Form';
+import Nav from 'react-bootstrap/Nav';
+import Navbar from 'react-bootstrap/Navbar';
+import NavDropdown from 'react-bootstrap/NavDropdown';
+
+export default function JourneyListView() {
   //this component accepts journey data as props to display journeys in a table
   //displays departure and return stations, covered distance in kilometers and duration in minutes
+  const [fetchParams,setFetchParams] = useState("2021/05") //default fetch is for data from May 2021
   const [journeyData,setJourneyData] =useState([{}]);
   const journeylist = journeyData.journeyData
 
@@ -22,7 +30,7 @@ export default function JourneyListView(data) {
       }
     ).then(
       data => {
-        console.log(data)
+        //console.log(data)
         if(data!==undefined){
           setJourneyData(data)
         }else{
@@ -32,7 +40,7 @@ export default function JourneyListView(data) {
     ) 
   } 
   useEffect(() => {
-    fetchData("2021/05")
+    fetchData(fetchParams)
     
   }, [])
 
@@ -40,15 +48,15 @@ export default function JourneyListView(data) {
 
   return (
     <>
-
-       <div style={{backgroundColor:"rgb(19, 19, 18)"}}>
-    {(typeof journeylist ==='undefined'||journeylist.length<1) ? (
+    <div style={{backgroundColor:"rgb(19, 19, 18)"}}>
+      <Actionbar/>
+      {(typeof journeylist ==='undefined'||journeylist.length<1) ? (
       <><SpinnerLoading/></> //if there is nothing to show, show a spinner
-    ):( //display journey
-     <>
-     <JourneyTable journeylist={journeylist}  />
-     </>
-    )}
+        ):( //display journey
+        <>
+          <JourneyTable journeylist={journeylist}  />
+        </>
+        )}
     </div>
       
     </>
@@ -130,5 +138,40 @@ const JourneyTable = (data) => {
       />
     </>
   )
+  
+}
+const Actionbar = () =>{
+  return(
+    <Navbar bg="dark" expand="lg" variant ="dark">
+      <Container fluid>
+        <Navbar.Brand >Journeys from: <span style={{color:"orange"}}>May, 2021</span></Navbar.Brand>
+        <Navbar.Toggle aria-controls="navbarScroll" />
+        <Navbar.Collapse id="navbarScroll">
+          <Nav
+            className="me-auto my-2 my-lg-0"
+            style={{ maxHeight: '100px' }}
+            navbarScroll
+          >
+           
+            <NavDropdown title="Select month" id="navbarScrollingDropdown">
+              <NavDropdown.Item >May</NavDropdown.Item>
+              <NavDropdown.Item >June</NavDropdown.Item>
+              <NavDropdown.Item >July</NavDropdown.Item>
+            </NavDropdown>
+           
+          </Nav>
+          <Form className="d-flex">
+            <Form.Control
+              type="search"
+              placeholder="Search"
+              className="me-2"
+              aria-label="Search"
+            />
+            
+          </Form>
+        </Navbar.Collapse>
+      </Container>
+    </Navbar>
+  );
   
 }
