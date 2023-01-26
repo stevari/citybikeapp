@@ -22,7 +22,6 @@ export default function StationListView() {
       }
     ).then(
       data => {
-        //console.log(data)
         if (data !== undefined) {
           setStationData(data)
         } else {
@@ -61,13 +60,11 @@ const StationTable = (data) => {
     { label: 'Name' },
     { label: 'Address' },
     { label: 'City' },
-    //{ label: 'Operator' },
     { label: 'Capacity' },
   ];
 
   const handleSortBtnClick =(label) =>{
     //sorts list when clicked
-    //console.log("handleSort called");
     const newList = [...stationlist];
     if(sort.includes(label)){ //if the sort has been clicked already, we want to reverse the sort
       setStationlist(newList.reverse());

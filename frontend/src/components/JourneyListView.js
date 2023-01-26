@@ -6,7 +6,7 @@ import SpinnerLoading from './SpinnerLoading';
 
 
 import Container from 'react-bootstrap/Container';
-import Form from 'react-bootstrap/Form';
+
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
 import NavDropdown from 'react-bootstrap/NavDropdown';
@@ -25,7 +25,7 @@ export default function JourneyListView() {
 
   async function fetchData(params){
     //params = e.g 2021/05
-    console.log("fetchData called with params "+params)
+
     fetch(`api/journeys/${params}`).then(
       response => {
         if(!response.ok){
@@ -79,7 +79,7 @@ const JourneyTable = (data) => {
   }, [data])
   
 
-  const [sort,setSort] = useState([]);
+  const [sort,setSort] = useState("Departurestationname");
 
   const columns = [
     { label: 'Departure',sortName:'Departurestationname' },
@@ -98,11 +98,11 @@ const JourneyTable = (data) => {
     //sorts list when clicked
     //console.log("handleSort called");
     const newList = [...journeylist];
-    if(sort.includes(label)){ //if the sort has been clicked already, we want to reverse the sort
+    if(sort===label){ //if the sort has been clicked already, we want to reverse the sort
       setJourneylist(newList.reverse());
     }else{
       setJourneylist(newList.sort((a,b) => (a[label] > b[label]) ? 1:-1)); //else, just sort the list using the label as object key, e.g Name
-      setSort(sort.concat(label)) 
+      setSort(label) 
     }
     
   }
@@ -191,15 +191,6 @@ const Actionbar = ({callback}) =>{
             </NavDropdown>
            
           </Nav>
-          <Form className="d-flex">
-            <Form.Control
-              type="search"
-              placeholder="Search"
-              className="me-2"
-              aria-label="Search"
-            />
-            
-          </Form>
         </Navbar.Collapse>
       </Container>
     </Navbar>

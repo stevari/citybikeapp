@@ -1,5 +1,5 @@
 import {React,useState,useEffect} from 'react'
-import { MapContainer, TileLayer, useMap,Marker,Popup } from 'react-leaflet';
+import { MapContainer, TileLayer,Marker} from 'react-leaflet';
 import "../App.css"
 
 
@@ -19,7 +19,6 @@ export default function StationMapView() {
       }
     ).then(
       data => {
-        //console.log(data)
         if (data !== undefined) {
           setStationData(data)
         } else {

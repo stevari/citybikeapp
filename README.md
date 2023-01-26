@@ -2,7 +2,8 @@
 
 This as a pre-assignment for Solita Dev Academy Finland 2023.  
 The goal is to create a UI and a backend service for displaying data from journeys made with city bikes in the Helsinki Capital area.    
-STATUS: In development as of 25.01.2023  
+STATUS: 26.1.2023 MVP ready. Might develop further at some point.  
+
 Link to the application: https://helcitybikeapp.fly.dev/  
   
 I will be using open data from Helsinki public transport (HSL).  
@@ -10,7 +11,7 @@ I will be using open data from Helsinki public transport (HSL).
 Project structure (short):  
 -Backend will be developed using the Express library  
 -Frontend will be served as an React application  
--Data will be stored and retrieved from a MongoDB database  
+-Data will be stored and retrieved from a MongoDB database. Showing only a fraction of the data since I dont want to pay for this app's hosting.    
   
 Project structure (long):  
     

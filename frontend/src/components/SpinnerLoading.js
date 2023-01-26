@@ -5,7 +5,7 @@ function SpinnerLoading() {
     <Spinner animation="border" role="status" 
     style={{
     color:"orange", 
-    position: "fixed", //cetner of the screen
+    position: "fixed", //center of the screen
     top: "50%",
     left: "50%"}}>
       <span className="visually-hidden">Loading...</span>
