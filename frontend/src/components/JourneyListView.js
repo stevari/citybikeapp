@@ -16,10 +16,16 @@ export default function JourneyListView() {
   //displays departure and return stations, covered distance in kilometers and duration in minutes
   const [fetchParams,setFetchParams] = useState("2021/05") //default fetch is for data from May 2021
   const [journeyData,setJourneyData] =useState([{}]);
+  const [loading,setLoading] = useState(true);
   const journeylist = journeyData.journeyData
+
+  const callback = payload => { //callback function to retrieve data from child component
+    setFetchParams(payload);
+  }
 
   async function fetchData(params){
     //params = e.g 2021/05
+    console.log("fetchData called with params "+params)
     fetch(`api/journeys/${params}`).then(
       response => {
         if(!response.ok){
@@ -33,6 +39,7 @@ export default function JourneyListView() {
         //console.log(data)
         if(data!==undefined){
           setJourneyData(data)
+          setLoading(false) //data fethced
         }else{
           setJourneyData([]);
         } 
@@ -41,18 +48,18 @@ export default function JourneyListView() {
   } 
   useEffect(() => {
     fetchData(fetchParams)
-    
-  }, [])
+    setLoading(true) //app is loading while fetching is in progress
+  }, [fetchParams])
 
   
 
   return (
     <>
     <div style={{backgroundColor:"rgb(19, 19, 18)"}}>
-      <Actionbar/>
-      {(typeof journeylist ==='undefined'||journeylist.length<1) ? (
+      <Actionbar callback = {callback}/>
+      {loading ? (
       <><SpinnerLoading/></> //if there is nothing to show, show a spinner
-        ):( //display journey
+        ):( //if there is data, display journeys
         <>
           <JourneyTable journeylist={journeylist}  />
         </>
@@ -65,8 +72,15 @@ export default function JourneyListView() {
 
 const JourneyTable = (data) => {
   //For each journey show departure and return stations, covered distance in kilometers and duration in minutes
-  const [journeylist,setJourneylist] = useState(data.journeylist);
+  const [journeylist,setJourneylist] = useState([]);
+
+  useEffect(() => { //update the journeylist when data given as props changes. This gets called at mount, and when user selects a different month from the action bar
+      setJourneylist(data.journeylist)
+  }, [data])
+  
+
   const [sort,setSort] = useState([]);
+
   const columns = [
     { label: 'Departure',sortName:'Departurestationname' },
     { label: 'Return',sortName:'Returnstationname' },
@@ -79,6 +93,7 @@ const JourneyTable = (data) => {
   const count = journeylist.length //total amount of items (rows)
   const totalPages = Math.ceil(count / rowsPerPage) //total no. of pages in our pagination
   const calculatedList = journeylist.slice((activePage - 1) * rowsPerPage, activePage * rowsPerPage) //number of pages to show
+  
   const handleSortBtnClick =(label) =>{
     //sorts list when clicked
     //console.log("handleSort called");
@@ -140,11 +155,27 @@ const JourneyTable = (data) => {
   )
   
 }
-const Actionbar = () =>{
+const Actionbar = ({callback}) =>{
+  const [newFetchParams,setNewFetchParams] = useState("2021/05");
+  const handleCallback = (value) => { //delivers period option to the parent component 
+    callback(value)
+    setNewFetchParams(value) 
+  }; 
+  
+  useEffect(() => {
+    handleCallback(newFetchParams); //triggers callback function every time user switches periods
+ },[newFetchParams]);
+
+  const periods = {
+  "2021/05":"May, 2021",
+  "2021/06":"June, 2021",
+  "2021/07":"July, 2021"
+  }
+  const period = periods[newFetchParams];
   return(
     <Navbar bg="dark" expand="lg" variant ="dark">
       <Container fluid>
-        <Navbar.Brand >Journeys from: <span style={{color:"orange"}}>May, 2021</span></Navbar.Brand>
+        <Navbar.Brand >Journeys from: <span style={{color:"orange"}}>{period}</span></Navbar.Brand>
         <Navbar.Toggle aria-controls="navbarScroll" />
         <Navbar.Collapse id="navbarScroll">
           <Nav
@@ -154,9 +185,9 @@ const Actionbar = () =>{
           >
            
             <NavDropdown title="Select month" id="navbarScrollingDropdown">
-              <NavDropdown.Item >May</NavDropdown.Item>
-              <NavDropdown.Item >June</NavDropdown.Item>
-              <NavDropdown.Item >July</NavDropdown.Item>
+              <NavDropdown.Item onClick={()=>{handleCallback("2021/05")}}>May</NavDropdown.Item>
+              <NavDropdown.Item onClick={()=>{handleCallback("2021/06")}}>June</NavDropdown.Item>
+              <NavDropdown.Item  onClick={()=>{handleCallback("2021/07")}}>July</NavDropdown.Item>
             </NavDropdown>
            
           </Nav>
