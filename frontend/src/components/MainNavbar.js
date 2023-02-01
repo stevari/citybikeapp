@@ -7,7 +7,7 @@ import {Bicycle} from "react-bootstrap-icons"
 export default function MainNavbar() {
 
   return (
-    <Navbar className='Navbar' variant="dark" >
+    <Navbar className='Navbar' variant="dark" expand = "lg">
       <Container>
         <Navbar.Brand href="/">
           <h2>Helsinki Citybikes
