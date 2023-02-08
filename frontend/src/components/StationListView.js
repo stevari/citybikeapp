@@ -6,6 +6,7 @@ import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import SpinnerLoading from './SpinnerLoading';
 import StationOnMap from './StationOnMap';
+import "./Modal.css"
 export default function StationListView() {
   //receives list of stations through props, then displays the stations in a table
   const [stationData, setStationData] = useState([{}]);
@@ -167,44 +168,43 @@ function StationPopup(show, handleClose,id,stationlist) { //single station view 
     backdrop="static"
     keyboard={false}
     size="lg"
-    
+
   >
-    <Modal.Header closeButton>
-      <Modal.Title>{station.Name}</Modal.Title>
-    </Modal.Header>
-      <Modal.Body>
-      <div >
-      <p>
-        Station Name: {station.Name}
-      </p>
-      <br/>
-      <p>
-        Station Address: {station.Address}
-      </p>
-      <br/>
-      <p>
-        Citybike Operator: {station.Operator} 
-      </p>
-      <br/>
-      <p>
-        Total No. journeys starting from this station: 
-      </p>
-      <br/>
-      <p>
-        Total No. journeys starting from this station:
-      </p>
-      <br/>
-      <div >
-      <StationOnMap station ={station}/> 
-      </div>
-      </div>  
-      
-      </Modal.Body>
-      <Modal.Footer>
-        <Button variant="primary" onClick={handleClose}>
-          Close
-        </Button>
-        
-      </Modal.Footer>
-  </Modal>;
+    <div className='dark_modal'>
+		<Modal.Header closeButton>
+			<Modal.Title><h3 className='h3'>{station.Name}</h3></Modal.Title>
+		</Modal.Header>
+		<Modal.Body className='dark_modal'>
+			<div className='p'>
+				<p>
+					Name: <span className='span'>{station.Name}</span>
+				</p>
+				<br/>
+				<p>
+					City: <span className='span'>{station.City}</span>
+				</p>
+				<br/>
+				<p>
+					Address: <span className='span'>{station.Address}</span>
+				</p>
+				<br/>
+				<p>
+					Operator: <span className='span'>{station.Operator} </span>
+				</p>
+				<br/>
+	
+				<br/>
+					<StationOnMap station ={station}/> 
+			</div>
+		
+		</Modal.Body>
+			<Modal.Footer>
+				<Button variant="warning" style={{color:"black"}} onClick={handleClose}>
+				Close
+				</Button>
+				
+			</Modal.Footer>
+		</div>
+		
+	</Modal>;
 }
