@@ -5,11 +5,9 @@ require('dotenv').config();
 const path = require('path'); //to server frontend
 const Journey = require('./models/journey.js');
 const Station = require('./models/station.js');
-const mongoose = require("mongoose");
 const cors = require("cors")
-const fs = require("fs");
-const { resolve } = require("path");
-const journey = require("./models/journey.js");
+require("path");
+
 
 const stationDataURL = `https://opendata.arcgis.com/datasets/726277c507ef4914b0aec3cbcfcbfafc_0.csv`;
  
@@ -37,17 +35,14 @@ async function retrieveStationDataFrom(url) {
         })
         .on("done", async (err) => {
             if (err){
-                console.log("An error has occurred");
+                console.log(err);
             } 
             else{
                 //loop through the station list and post each one to the db
-                //but first get additional information from all the stations, for example average journey length from station
-                //getAdditionalStationInfoFrom(stationList)
                 stationList.forEach(station =>{
                     postStationToDatabase(station);
                 })
                 resolve(stationList); //return list of stations
-
             } 
             });
         })
@@ -55,12 +50,6 @@ async function retrieveStationDataFrom(url) {
     } catch (error) {
         console.log('error in retrieveStationDataFrom(url)'+error);
     }
-}
-
-async function countDepartingJourneysFromStations(){
-    //for each journey, check if journey's departurestation ID is equal to station ID.
-    //if true, increment count by one. Lastly, update station with a new field called Departures with the count
-   
 }
 
  async function postStationToDatabase(data){
@@ -76,7 +65,6 @@ async function countDepartingJourneysFromStations(){
         y: data.y
     })
     await station.save().then(result => {
-        //console.log(result +' saved to db');
         return result;
         
     })
@@ -84,12 +72,13 @@ async function countDepartingJourneysFromStations(){
 
 
     
-const PORT = process.env.PORT || "8080"; //port for the web server
+const PORT = process.env.PORT || "8080";
 const app = express(); //using express library to make the server
 app.use(cors()); //allow cross origin resource sharing
 app.use(express.static(path.resolve(__dirname, 'frontend/build'))); //serve frontend static files
+
 app.get('/api',(req,res) => {
-    res.send("<h1>Empty page</h1>");
+    res.send("<h1>CityBike app server</h1>");
   })
 
 app.get('/api/journeys/:year/:month', async (req,res) => {
@@ -127,12 +116,11 @@ app.get('/api/stations/', async (req,res) => {
 })
 app.get('/api/stations/:id', async (req,res) =>{ //retrieve station by its ID (int)
     const ID = req.params.id
-    //console.log("id+"+ID)
     Station.findOne({"ID":ID}).then(result => {res.json(result)})
 })
 
 app.get('*',(req,res) => {
-    //any requests wihout /api will be served with front end page
+    //any requests wihout /api will be served with front end page. This request exists for deployment of the app
     res.sendFile(path.resolve(__dirname,'frontend/build','index.html'));
   })
 
