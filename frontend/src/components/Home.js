@@ -6,9 +6,7 @@ export default function Home() {
   //Landing page component
   return ( 
       <>
-        <div className='hero-image'>
-        
-        </div>
+        <div className='hero-image'/>
         <div className='hero-text'>
           <h1 className='h1'>Helsinki Citybikes</h1>
           <p>Explore citybike journeys made in Helsinki & Espoo</p>
