@@ -4,6 +4,7 @@ import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
 import "./Navbar.css"
 import {Bicycle} from "react-bootstrap-icons"
+import HelsinkiLogo from "../images/HELSINKI-HELSINGFORS_Tunnus_VALKOINEN.png";
 export default function MainNavbar() {
 
   return (
@@ -12,6 +13,11 @@ export default function MainNavbar() {
         <Navbar.Brand href="/">
           <h2>Helsinki Citybikes
           <Bicycle size={40} color ={"orange"} style={{marginLeft:"2%"}}/>
+          <img 
+          className='logo'
+          src={HelsinkiLogo}
+          alt="Helsinki logo"
+          />
           </h2>
         </Navbar.Brand>
         <Navbar.Toggle aria-controls="responsive-navbar-nav" />

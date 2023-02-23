@@ -25,24 +25,16 @@
     font-size:75px;
     margin:10px
   }
-  .btnJourney{
-    color: orange;
-    top: 70%;
-    left:50%;
-    transform: translate(-50%, -50%);
+  .button-container{
+    display: flex;
     position: absolute;
+    bottom:15%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
   }
-  .btnStation{
+  .btn{
     color: orange;
-    top: 70%;
-    left:40%;
-    transform: translate(-50%, -50%);
-    position: absolute;
-  }
-  .btnStationMap{
-    color: orange;
-    top: 70%;
-    left:60%;
-    transform: translate(-50%, -50%);
-    position: absolute;
+    margin: 1vw;
+
   }
